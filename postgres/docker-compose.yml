@@ -1,0 +1,19 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:9.6
+    container_name: "postgres"
+    ports: 
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=spring-rest-db
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - TZ=GMT
+    volumes:
+      - "/var/lib/postgresql/data"
+    restart: always
+networks:
+  default:
+      external:
+          name: postgres_default
