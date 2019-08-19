@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:9.6
     container_name: "postgres"
-    ports: 
+    ports:
       - "5432:5432"
     environment:
       - POSTGRES_DB=spring-rest-db
@@ -15,5 +15,5 @@ services:
     restart: always
 networks:
   default:
-      external:
-          name: postgres_default
+    external:
+      name: postgres_default
