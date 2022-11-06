@@ -1,19 +1,19 @@
 version: "3.6"
 services:
   postgres:
-    image: postgres:9.6
+    image: postgres:latest
     container_name: "postgres"
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=spring-rest-db
+      - POSTGRES_DB=spring-in-action
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
-      - TZ=GMT
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - TZ=GMT-3
     volumes:
-      - "/var/lib/postgresql/data"
+      - "~/Documentos/docker_volumes/postgresql:/var/lib/postgresql/data"
     restart: always
 networks:
-  default:
-    external:
-      name: postgres_default
+  postgres:
+    driver: bridge
