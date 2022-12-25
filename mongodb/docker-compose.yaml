@@ -1,4 +1,3 @@
-version: "3.6"
 services:
   mongo:
     image: mongo:latest
@@ -10,5 +9,7 @@ services:
       - MONGO_LOG_DIR=/dev/null
       - MONGODB_USER="mongo-user"
       - MONGODB_PASS="mongo-pass"
+      - PUID=1000
+      - PGID=1000
     volumes:
-      - /data/db
+      - /home/portela/Documentos/docker-volumes/mongodb/data:/data/db
