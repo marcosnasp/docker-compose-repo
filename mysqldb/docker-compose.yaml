@@ -1,0 +1,20 @@
+version: "3.6"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysqldb
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'mysql-user'
+      MYSQL_PASSWORD: 'mysql-password'
+      MYSQL_ROOT_PASSWORD: 'root-password'
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - "~/Documentos/Desenv/docker/volumes:/var/lib/mysql"
+networks:
+  mysql:
+    driver: bridge
