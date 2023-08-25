@@ -1,4 +1,4 @@
-version: "3.6"
+version: "3.8"
 services:
   vault:
     build:
@@ -13,6 +13,6 @@ services:
       - ./vault/logs:/vault/logs
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
-    command: server -config=/vault/config/vault-config.json
+    command: server -config=/vault/config/vault-config.jsversion: "3"on
     cap_add:
       - IPC_LOCK

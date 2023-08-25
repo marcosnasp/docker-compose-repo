@@ -1,20 +1,20 @@
-version: "3.6"
+version: "3.8"
 services:
   mysql:
-    image: mysql:5.7
+    image: mysql:8.0.34
     container_name: mysqldb
     restart: always
     environment:
       MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'mysql-user'
-      MYSQL_PASSWORD: 'mysql-password'
-      MYSQL_ROOT_PASSWORD: 'root-password'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'root_password'
+      MYSQL_ROOT_PASSWORD: 'root_password'
     ports:
       - "3306:3306"
-    expose:
+    expose:version: "3"
       - "3306"
     volumes:
-      - "~/Documentos/Desenv/docker/volumes:/var/lib/mysql"
+      - "${PWD}/data:/var/lib/mysql"
 networks:
   mysql:
     driver: bridge

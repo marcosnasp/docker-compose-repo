@@ -1,6 +1,7 @@
+version: "3.8"
 services:
   mongo:
-    image: mongo:latest
+    image: moversion: "3"ngo:latest
     container_name: mongodb
     ports:
       - "27017:27017"

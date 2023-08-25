@@ -1,18 +1,18 @@
-version: "3.6"
+version: "3.8"
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:14.1-alpine
     container_name: "postgres"
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=spring-in-action
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_USER=postgres
+      - POSTGRES_DB=ws_servico
+      - POSTGRES_PASSWORD=ws-servico
+      - POSTGRES_USER=ws-servico
       - PGDATA=/var/lib/postgresql/data/pgdata
       - TZ=GMT-3
     volumes:
-      - "~/Documentos/docker_volumes/postgresql:/var/lib/postgresql/data"
+      - "~/Documentos/Desenv/docker/volumes/postgresql/data:/var/lib/postgresql/data"
     restart: always
 networks:
   postgres:
