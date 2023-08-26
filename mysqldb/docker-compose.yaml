@@ -11,7 +11,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'root_password'
     ports:
       - "3306:3306"
-    expose:version: "3"
+    expose:
       - "3306"
     volumes:
       - "${PWD}/data:/var/lib/mysql"

@@ -1,0 +1,72 @@
+version: "3.8"
+services:
+  nexus:
+    image: sonatype/nexus3:latest
+    container_name: nexus
+    ports:
+      - "8081:8081"
+    environment:
+      - NEXUS_VERSION=/data/db
+    volumes:
+      - nexus:/nexus-data
+  jenkins:
+    image: jenkins/jenkins:latest
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - /home/portela/Documentos/docker_volumes/jenkins_configuration:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+  db:
+    image: postgres:12
+    hostname: postgresql
+    container_name: postgresql
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+      POSTGRES_DB: sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+  sonarqube:
+    image: sonarqube:community
+    hostname: sonarqube
+    container_name: sonarqube
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - 9000:9000
+  agent:
+    image: jenkins/ssh-agent:jdk11
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    user: root
+    container_name: agent
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC4Df2Qk4Z0R1L/zofX8ZIbOVCftceOXw1QqDDi9QGnMWD8PDKNGcK1DTjM00dVrIsS1t8UXJUY+0tQadvams9Y/5zLexPakVJX4y9Bb055x77ENy2hduV47ABmri8F1o2fwPqsxk6MZDE0UGgYZv5AANTW7oqgBD9/FR/1Yxx1AKsxXehdOV3rHM4sm6ZUcSlv+egQRc9KQQX8wzwqhSIiHPJVvDNrta2cvQEwcHZ1GOcEiXcBa0GNprrfgZyiT/Zq1t4P5Nl5k4nfSfcNjJVWk7RD0pO/Skz9ojXc2Tb3O+KbL42MLdvXPzZPM8nUdy8DiN93bY3sK7xv7PVkBDh1B+MjtAVr1hNw40tWctzknkZnbUXPJ3yfwQBEXYE++RxhdvZO3XalOv7B6CN16tP4OesxppTfxrkU6nlDjsjf/1ccta2gxWcdd3r1UBPIUJlum7g6nNE4vlG9ANx0aFGMWYdPuMxcMKnwKsUZPXWzjQ/jHvIl8gdxaF7L8INB1Ls= jenkins@fb378b75f7b6
+volumes:
+  nexus:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
+networks:
+  default:
+    name:
+      ci-network
