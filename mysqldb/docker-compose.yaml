@@ -5,16 +5,18 @@ services:
     container_name: mysqldb
     restart: always
     environment:
-      MYSQL_DATABASE: 'db'
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'root_password'
+      MYSQL_DATABASE: 'example'
+      MYSQL_USER: 'user_db'
+      MYSQL_PASSWORD: 'user_password'
       MYSQL_ROOT_PASSWORD: 'root_password'
     ports:
       - "3306:3306"
     expose:
       - "3306"
+    networks:
+      - mysql_net
     volumes:
       - "${PWD}/data:/var/lib/mysql"
 networks:
-  mysql:
+  mysql_net:
     driver: bridge
