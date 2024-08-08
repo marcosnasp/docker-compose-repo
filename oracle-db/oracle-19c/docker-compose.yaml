@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  oracle:
+    image: gvenzl/oracle-xe:19.3.0
+    container_name: oracle19c
+    ports:
+      - "1521:1521"   # Porta padrão para Oracle SQL*Net
+      - "5500:5500"   # Porta padrão para Oracle Enterprise Manager
+    environment:
+      ORACLE_PASSWORD: "YourPassword123"  # Senha para o usuário SYS, SYSTEM e PDBADMIN
+    volumes:
+      - oracle_data:/opt/oracle/oradata   # Persistência dos dados
+
+volumes:
+  oracle_data:
+    driver: local
