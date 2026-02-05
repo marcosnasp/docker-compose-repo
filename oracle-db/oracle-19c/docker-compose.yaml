@@ -1,17 +1,65 @@
-version: '3.1'
+version: '3.8'  # Versão mais recente e estável do Compose
 
 services:
   oracle:
-    image: gvenzl/oracle-xe:19.3.0
+    image: gvenzl/oracle-xe:19-full  # Recomendo 21c (mais nova, compatível com 19c SQL)
+    # Alternativa segura: gvenzl/oracle-xe:19-full (se precisar exatamente 19c)
     container_name: oracle19c
+    restart: unless-stopped  # Reinicia automaticamente em falhas
     ports:
-      - "1521:1521"   # Porta padrão para Oracle SQL*Net
-      - "5500:5500"   # Porta padrão para Oracle Enterprise Manager
+      - "1521:1521"   # Oracle Listener (SQL*Net)
+      - "5500:5500"   # Oracle Enterprise Manager Express (EM)
     environment:
-      ORACLE_PASSWORD: "YourPassword123"  # Senha para o usuário SYS, SYSTEM e PDBADMIN
+      # Senha forte (mínimo 8 caracteres, com letra, número e símbolo)
+      ORACLE_PASSWORD: "Oracle#2025!Secure"
+      
+      # Opcional: definir PDB name personalizado
+      ORACLE_PDB: XEPDB1
+      
+      # Memória mínima recomendada (padrão é 1GB, aumente se necessário)
+      ORACLE_MEM: 2GB
+      
+      # Desabilita modo de inicialização lenta (útil em dev)
+      APP_USER: devuser
+      APP_USER_PASSWORD: "Dev#123!"
+      
     volumes:
-      - oracle_data:/opt/oracle/oradata   # Persistência dos dados
+      # Persistência dos dados do banco
+      - oracle_data:/opt/oracle/oradata
+      
+      # Opcional: scripts de inicialização (SQL, DDL, DML)
+      - ./init-scripts:/container-init.d
+      
+      # Opcional: backups ou dumps
+      - ./backups:/backups
+      
+    shm_size: '2gb'  # Aumenta memória compartilhada (crítico para Oracle)
+    
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/\"$ORACLE_PASSWORD\"@//localhost:1521/XEPDB1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 2m  # Aguarda inicialização completa
 
+    # Limites de recursos (ajuste conforme seu host)
+    mem_limit: 4g
+    cpus: "2.0"
+
+    # Rede personalizada (opcional, mas útil em multi-container)
+    networks:
+      - oracle-net
+
+# Volumes nomeados (persistência fora do container)
 volumes:
   oracle_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/oracle_data  # Usa diretório local (melhor controle)
+
+# Rede isolada (opcional)
+networks:
+  oracle-net:
+    driver: bridge

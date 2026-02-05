@@ -1,0 +1,38 @@
+services:
+  traefik:
+    image: traefik:v3.6.7
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "8080:8080"           # dashboard Traefik (dev only)
+      # - "443:443"
+    environment:
+      - TZ=America/Fortaleza
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yaml:/etc/traefik/traefik.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+      # - ./letsencrypt:/letsencrypt  # futuro
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping", "--ping.entrypoint=ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s   # dá tempo para o Traefik iniciar o ping endpoint
+    command:
+      - --ping=true
+      - --ping.entrypoint=ping
+      - --entrypoints.ping.address=:8082
+      - --configFile=/etc/traefik/traefik.yaml
+      - --log.level=INFO
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedByDefault=false
+      - --entrypoints.web.address=:80
+    networks:
+      - proxy-net
+
+networks:
+  proxy-net:
+    name: proxy-net          # nome fixo e bonito (sem prefixo de projeto)

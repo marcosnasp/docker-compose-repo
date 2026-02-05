@@ -1,0 +1,30 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=America/Fortaleza         # ← adicionar fuso horário
+    ports:
+      - "9000:9000"                  # opcional, acesso direto (dev only) 
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy-net                     # ← aqui, dentro do serviço
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.local`)"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+networks:
+  proxy-net:
+    name: proxy-net
+    external: true                      # ← aqui embaixo, nível top
+
+volumes:
+  portainer_data:

@@ -1,0 +1,27 @@
+  # traefik.yml
+  global:
+    checkNewVersion: true
+    sendAnonymousUsage: false
+
+  log:
+    level: INFO
+
+  api:
+    dashboard: true
+    insecure: true   # dev only - remove ou proteja em prod
+
+  entryPoints:
+    web:
+      address: ":80"
+    ping:
+      address: ":8082"  
+    # websecure:
+    #   address: ":443"
+
+  providers:
+    docker:
+      exposedByDefault: false
+
+  ping:
+    manualRouting: false # Opcional, mas ajuda a evitar conflitos
+    entryPoint: ping
